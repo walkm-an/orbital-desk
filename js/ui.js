@@ -1,7 +1,3 @@
-/*
- * 2440587.5 is the Julian date of 1970-01-01 00:00 UTC,
- * checked by JD 2451545.0 = 2000-01-01 12:00 UTC.
- */
 (function () {
   'use strict';
 
@@ -172,8 +168,8 @@
   function readAll(engines, bodies, jd) {
     return bodies.map((body) => measure(
       body,
-      samplePosition(engines.a, body.id, jd),
-      samplePosition(engines.b, body.id, jd),
+      snapshotPosition(engines.a, body.id, jd),
+      snapshotPosition(engines.b, body.id, jd),
     ));
   }
 
@@ -254,7 +250,7 @@
     return Object.freeze(bodies);
   }
 
-  function samplePosition(engine, id, jd) {
+  function snapshotPosition(engine, id, jd) {
     let p;
     try {
       p = engine.positionAt(id, jd);
@@ -262,7 +258,6 @@
       return null;
     }
     if (!p || ![p.x, p.y, p.z, p.lon].every(Number.isFinite)) return null;
-    // Copy the fields. An engine may reuse one result object and overwrite an earlier reading.
     return Object.freeze({ x: p.x, y: p.y, z: p.z, lon: p.lon });
   }
 
@@ -549,7 +544,7 @@
       rowCells,
       thresholdLegend,
       parseBodies,
-      samplePosition,
+      snapshotPosition,
       julianDayOf,
       parseSelection,
       parseSpeed,
