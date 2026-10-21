@@ -17,7 +17,7 @@
       earth: 0.02,
       mars: 0.02,
       jupiter: 0.02,
-      saturn: 0.02,
+      saturn: 0.035,
       uranus: 0.1,
       neptune: 0.1,
     }),
