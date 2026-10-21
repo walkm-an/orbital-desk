@@ -30,6 +30,8 @@ body {
 }
 
 .stage {
+  position: relative;
+  overflow: hidden;
   height: min(62vh, 100vw);
   min-height: 0;
   background: var(--bg);
@@ -39,6 +41,40 @@ body {
   display: block;
   width: 100%;
   height: 100%;
+  cursor: grab;
+}
+
+.stage canvas:active {
+  cursor: grabbing;
+}
+
+.label-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.planet-label {
+  --planet-color: var(--ink);
+  padding: 0.1rem 0.4rem;
+  margin-bottom: 0.2rem;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  color: var(--ink);
+  font-size: 12px;
+  line-height: 1.3;
+  white-space: nowrap;
+  text-shadow: 0 0 3px #000, 0 0 6px #000;
+  user-select: none;
+}
+
+.planet-label.is-selected {
+  border-color: var(--planet-color);
+  background: rgba(5, 7, 13, 0.55);
+}
+
+.planet-label.is-followed {
+  color: var(--planet-color);
 }
 
 .sidebar {
