@@ -58,6 +58,7 @@
   const NO_RENDER = Object.freeze({
     mount() {},
     setTime() {},
+    setFollow() {},
     onSelect() {},
   });
 
@@ -297,7 +298,7 @@
       ? g.AltEngine
       : MISSING_ENGINE;
     const render = need(
-      hasMethods(g.OrbitRender, ['mount', 'setTime', 'onSelect']),
+      hasMethods(g.OrbitRender, ['mount', 'setTime', 'setFollow', 'onSelect']),
       'OrbitRender',
       'js/render3d.js',
       '画布不可用',
@@ -479,6 +480,7 @@
         if (nextId === selectedId) return;
         selectedId = nextId;
         repaint(g.performance.now());
+        render.setFollow(nextId);
       });
     } catch (err) {
       render = NO_RENDER;

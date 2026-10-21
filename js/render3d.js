@@ -580,7 +580,7 @@ function buildBody(m, row) {
   );
   spin.userData.planetId = body.id;
   const proxy = new THREE.Mesh(
-    new THREE.SphereGeometry(body.radius * HIT_RADII, 12, 8),
+    new THREE.SphereGeometry(body.radius * Math.max(HIT_RADII, ring ? ring.outer : 1), 12, 8),
     new THREE.MeshBasicMaterial(),
   );
   proxy.visible = false;
@@ -768,7 +768,7 @@ function paintLabelState(m) {
 function select(m, id) {
   m.selectedId = id;
   paintLabelState(m);
-  flyTo(m, id);
+  if (id !== null) flyTo(m, id);
   if (!selectCb) return;
   try {
     selectCb(id);
@@ -787,7 +787,7 @@ function pick(m, clientX, clientY) {
   // A sphere hit beats the enlarged hit proxy of a nearer neighbour, e.g. Venus in front of Earth at conjunction.
   const hits = m.raycaster.intersectObjects(shown.map((b) => b.spin), false);
   const loose = hits.length > 0 ? hits : m.raycaster.intersectObjects(shown.map((b) => b.proxy), false);
-  if (loose.length > 0) select(m, loose[0].object.userData.planetId);
+  select(m, loose.length > 0 ? loose[0].object.userData.planetId : null);
 }
 
 // ---------- mount / loop ----------
@@ -919,6 +919,12 @@ function mount(canvas, options) {
   });
   canvas.addEventListener('pointerdown', (e) => {
     m.press = e.button === 0 ? { pointerId: e.pointerId, x: e.clientX, y: e.clientY } : null;
+  }, { signal });
+  canvas.addEventListener('pointermove', (e) => {
+    const press = m.press;
+    if (press && press.pointerId === e.pointerId && Math.hypot(e.clientX - press.x, e.clientY - press.y) > CLICK_PX) {
+      m.press = null;
+    }
   }, { signal });
   canvas.addEventListener('pointerup', (e) => {
     const press = m.press;
