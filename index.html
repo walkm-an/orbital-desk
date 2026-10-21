@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Orbital Desk 行星轨道台</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="desk">
+    <main class="stage">
+      <canvas id="orbit-canvas" aria-label="太阳系俯视轨道图，点击行星查看详情"></canvas>
+    </main>
+    <aside class="sidebar">
+      <p id="desk-problems" class="problems" role="alert" hidden></p>
+      <section class="panel" aria-labelledby="time-heading">
+        <h2 id="time-heading">时间控制</h2>
+        <output id="sim-readout" class="readout">—</output>
+        <fieldset id="time-controls" class="time-controls">
+          <button id="play-toggle" type="button">▶ 播放</button>
+          <fieldset id="speed-group" class="speeds"><legend>倍速</legend></fieldset>
+          <p class="hint">倍速指每天数/秒，1x = 1 天/秒</p>
+          <label class="date">跳转日期 <input id="date-input" type="date"></label>
+        </fieldset>
+      </section>
+      <section class="panel" aria-labelledby="card-heading">
+        <h2 id="card-heading">行星信息</h2>
+        <p id="card-empty" class="hint">点击画布中的行星查看详情</p>
+        <div id="planet-card" hidden>
+          <h3><span id="card-swatch" class="swatch"></span><span id="card-title"></span></h3>
+          <dl id="card-fields"></dl>
+        </div>
+      </section>
+      <section class="panel" aria-labelledby="deviation-heading">
+        <h2 id="deviation-heading">双引擎偏差</h2>
+        <table class="deviation">
+          <thead id="deviation-head"></thead>
+          <tbody id="deviation-body"></tbody>
+        </table>
+        <p id="threshold-legend" class="hint"></p>
+      </section>
+    </aside>
+  </div>
+  <script src="data/planets.js"></script>
+  <script src="js/kepler.js"></script>
+  <script src="js/alt.js"></script>
+  <script src="js/render.js"></script>
+  <script src="js/ui.js"></script>
+</body>
+</html>
