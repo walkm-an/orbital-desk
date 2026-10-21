@@ -4,12 +4,21 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Orbital Desk 行星轨道台</title>
+  <link rel="icon" href="data:,">
   <link rel="stylesheet" href="style.css">
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+      }
+    }
+  </script>
 </head>
 <body>
   <div class="desk">
     <main class="stage">
-      <canvas id="orbit-canvas" aria-label="太阳系俯视轨道图，点击行星查看详情"></canvas>
+      <canvas id="orbit-canvas" aria-label="太阳系三维轨道图：拖拽旋转、滚轮缩放、右键平移，点击行星查看详情"></canvas>
     </main>
     <aside class="sidebar">
       <p id="desk-problems" class="problems" role="alert" hidden></p>
@@ -45,7 +54,7 @@
   <script src="data/planets.js"></script>
   <script src="js/kepler.js"></script>
   <script src="js/alt.js"></script>
-  <script src="js/render.js"></script>
+  <script type="module" src="js/render3d.js" data-orbit-render></script>
   <script src="js/ui.js"></script>
 </body>
 </html>

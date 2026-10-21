@@ -1,3 +1,8 @@
+> **v2 修订（2026-10-21，契约 owner）**：渲染层升级为 Three.js 3D。本修订与下文冲突处以本修订为准：
+> - 渲染层（js/render3d.js）允许 ES module + CDN import map（three@0.160.0 锁定，jsDelivr），取代原 js/render.js；window.OrbitRender 接口（mount/setTime/setFollow/onSelect）不变。
+> - 数据层与双引擎（data/planets.js、js/kepler.js、js/alt.js）维持零依赖、经典 script 不变，仍是禁动资产。
+> - 页面为可旋转/缩放的 3D 场景；原"俯视"表述作废。index.html 其余结构与偏差面板契约不变。
+
 # 接口契约 CONTRACT（所有 slice 必须严格遵守，冲突以本文件为准）
 
 ## 总约束

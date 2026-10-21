@@ -29,6 +29,10 @@
   const MAX_FRAME_SEC = 0.25;
   const PANEL_INTERVAL_MS = 250;
   const DASH = '\u2014';
+  const RENDER_READY_EVENT = 'orbitrender:ready';
+  const RENDER_SCRIPT_SELECTOR = 'script[data-orbit-render]';
+  const RENDER_WAIT_MS = 15000;
+  const RENDER_POLL_MS = 250;
 
   const CARD_FIELDS = Object.freeze([
     Object.freeze({ label: '半径', text: (reading) => formatRadius(reading.body.radiusKm) }),
@@ -55,6 +59,7 @@
   const NO_RENDER = Object.freeze({
     mount() {},
     setTime() {},
+    setFollow() {},
     onSelect() {},
   });
 
@@ -294,9 +299,9 @@
       ? g.AltEngine
       : MISSING_ENGINE;
     const render = need(
-      hasMethods(g.OrbitRender, ['mount', 'setTime', 'onSelect']),
+      hasMethods(g.OrbitRender, ['mount', 'setTime', 'setFollow', 'onSelect']),
       'OrbitRender',
-      'js/render.js',
+      'js/render3d.js',
       '画布不可用',
     )
       ? g.OrbitRender
@@ -476,6 +481,7 @@
         if (nextId === selectedId) return;
         selectedId = nextId;
         repaint(g.performance.now());
+        render.setFollow(nextId);
       });
     } catch (err) {
       render = NO_RENDER;
@@ -552,11 +558,44 @@
     });
   }
 
-  if (typeof document !== 'undefined') {
-    try {
-      boot(globalThis, document);
-    } catch (err) {
-      reportBootCrash(document, err);
+  // render3d.js is an ES module that imports three.js from a CDN, so it runs after this classic script.
+  function whenRenderSettles(g, doc, done) {
+    if (g.OrbitRender) {
+      done();
+      return;
     }
+    let settled = false;
+    const script = doc.querySelector(RENDER_SCRIPT_SELECTOR);
+    const finish = () => {
+      if (settled) return;
+      settled = true;
+      g.clearTimeout(timer);
+      g.clearInterval(poll);
+      g.removeEventListener(RENDER_READY_EVENT, finish);
+      if (script) script.removeEventListener('error', finish);
+      done();
+    };
+    const timer = g.setTimeout(() => {
+      if (settled) return;
+      const box = doc.getElementById('desk-problems');
+      if (!box) return;
+      box.hidden = false;
+      box.textContent = '三维渲染器仍在加载。网络较慢时请继续等待。';
+    }, RENDER_WAIT_MS);
+    const poll = g.setInterval(() => {
+      if (g.OrbitRender) finish();
+    }, RENDER_POLL_MS);
+    g.addEventListener(RENDER_READY_EVENT, finish);
+    if (script) script.addEventListener('error', finish);
+  }
+
+  if (typeof document !== 'undefined') {
+    whenRenderSettles(globalThis, document, () => {
+      try {
+        boot(globalThis, document);
+      } catch (err) {
+        reportBootCrash(document, err);
+      }
+    });
   }
 })();
